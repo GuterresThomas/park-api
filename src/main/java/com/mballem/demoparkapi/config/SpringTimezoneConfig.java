@@ -14,4 +14,3 @@ public class SpringTimezoneConfig {
         TimeZone.setDefault(TimeZone.getTimeZone( "America/Sao_Paulo"));
     }
 }
-
