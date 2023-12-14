@@ -1,6 +1,7 @@
 package com.mballem.demoparkapi.service;
 
 import com.mballem.demoparkapi.entity.Usuario;
+import com.mballem.demoparkapi.exception.EntityNotFoundException;
 import com.mballem.demoparkapi.exception.UsernameUniqueUsernameViolationException;
 import com.mballem.demoparkapi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
@@ -31,7 +32,7 @@ public class UsuarioService {
     @Transactional
     public Usuario buscarPorId(Long id) {
         return usuarioRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Usuario não encontrado.")
+                () -> new EntityNotFoundException(String.format("Usuario id=%s não encontrado.", id))
         );
     }
 
