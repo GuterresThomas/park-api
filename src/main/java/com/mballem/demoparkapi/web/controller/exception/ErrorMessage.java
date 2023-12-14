@@ -1,5 +1,6 @@
 package com.mballem.demoparkapi.web.controller.exception;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,7 @@ public class ErrorMessage {
     private int status;
     private String statusText;
     private String message;
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, String> errors;
 
     public ErrorMessage() {
@@ -34,6 +35,14 @@ public class ErrorMessage {
         this.statusText = status.getReasonPhrase();
         this.message = message;
         addErrors(result);
+    }
+
+    public ErrorMessage(HttpServletRequest request, HttpStatus status, String message) {
+        this.path = request.getRequestURI();
+        this.method = request.getMethod();
+        this.status = status.value();
+        this.statusText = status.getReasonPhrase();
+        this.message = message;
     }
 
     private void addErrors(BindingResult result) {

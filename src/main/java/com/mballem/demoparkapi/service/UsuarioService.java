@@ -1,6 +1,7 @@
 package com.mballem.demoparkapi.service;
 
 import com.mballem.demoparkapi.entity.Usuario;
+import com.mballem.demoparkapi.exception.UsernameUniqueUsernameViolationException;
 import com.mballem.demoparkapi.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +14,18 @@ import java.util.List;
 
 public class UsuarioService {
 
+
     private final UsuarioRepository usuarioRepository;
 
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+
+        try {
+            return usuarioRepository.save(usuario);
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            throw new UsernameUniqueUsernameViolationException(String.format("Username {%s} já cadastrado", usuario.getUsername()));
+        }
     }
 
     @Transactional
