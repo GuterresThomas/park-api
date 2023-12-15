@@ -8,6 +8,7 @@ import com.mballem.demoparkapi.web.controller.dto.UsuarioSenhaDto;
 import com.mballem.demoparkapi.web.controller.dto.mapper.UsuarioMapper;
 import com.mballem.demoparkapi.web.controller.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -78,6 +79,14 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
+
+    @Operation(
+            summary = "Lista com todos os usuários",
+            description = "Lista com todos os usuários cadastrados",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista com todos os usuários cadastrados",
+                            content = @Content(mediaType = "Application/json", array = @ArraySchema(schema = @Schema(implementation = UsuarioResponseDto.class)))),
+            })
     @GetMapping
     public ResponseEntity<List<UsuarioResponseDto>> getAll() {
         List<Usuario> users = usuarioService.buscarTodos();
