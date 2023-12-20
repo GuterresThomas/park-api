@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = "/sql/usuarios/usuarios-insert.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "/sql/usuarios/usuarios-delete.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -138,5 +139,35 @@ public class UsuarioIT {
 
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(409);
+    }
+
+    @Test
+    public void buscarUsuario_comIdExistente_RetornarUsuarioComStatus200() {
+        UsuarioResponseDto responseBody = testClient
+                .get()
+                .uri("/api/v1/usuarios/100")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(UsuarioResponseDto.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(100);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getUsername()).isEqualTo("teste@email.com");
+        org.assertj.core.api.Assertions.assertThat(responseBody.getRole()).isEqualTo("ADMIN");
+    }
+
+    @Test
+    public void buscarUsuario_comIdInexistente_RetornarErrorMessageComStatus400() {
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri("/api/v1/usuarios/104")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
     }
 }
